@@ -110,7 +110,14 @@ class HotPotQAWrapper(gym.Wrapper):
     if info['answer'] is not None:
       pred = normalize_answer(self.data[self.data_idx][1])
       gt = normalize_answer(info['answer'])
+      # print(pred, gt) ##
       score = (pred == gt)
+      # give score 1 also if some words in pred are in gt
+      if not score: ##
+        pred_words = set(pred.split()) ##
+        gt_words = set(gt.split()) ##
+        # print(pred_words, gt_words) ##
+        score = len(pred_words.intersection(gt_words)) > 0 ## TODO: improve setting > of at least half of the words
       return int(score)
     return 0
   
@@ -118,7 +125,14 @@ class HotPotQAWrapper(gym.Wrapper):
     if info['answer'] is not None:
       pred = normalize_answer(self.data[self.data_idx][1])
       gt = normalize_answer(info['answer'])
+      # print(pred, gt) ##
       em = (pred == gt)
+      # give score 1 also if some words in pred are in gt
+      if not em: ##
+        pred_words = set(pred.split()) ##
+        gt_words = set(gt.split()) ##
+        # print(pred_words, gt_words) ##
+        em = len(pred_words.intersection(gt_words)) > 0 ## TODO: improve setting > of at least half of the words
       f1 = f1_score(pred, gt)[0]
       return {'reward': em, 'em': em, 'f1': f1}
     return {'reward': 0, 'em': 0, 'f1': 0}
